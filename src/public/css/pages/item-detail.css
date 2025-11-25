@@ -1,0 +1,117 @@
+.item-content {
+    display: flex !important;
+    flex-wrap: wrap;
+    margin: 50px auto;
+    gap: 40px;
+    width: 90%;
+}
+
+.product__image-area {
+    flex: 0 0 40%;
+    width: 600px;
+    height: 600px;
+    background-color: #D9D9D9;
+}
+
+.product__image-area img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+}
+.product__description-area {
+    flex: 1 1 55%;
+    display: flex;
+    flex-direction: column !important;
+}
+.product-name {
+    font-size: 45px;
+    font-weight: bold;
+}
+.brand {
+    font-size: 20px;
+}
+.price {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.product-actions {
+    display: flex;
+    gap: 30px;
+}
+.product-actions__item {
+    display: flex;
+    font-size: 20px;
+    flex-direction: column;
+    align-items: center;
+}
+.like, .like-disabled {
+    cursor: pointer;
+    font-size: 20px;
+    border: none;
+    background: none;
+}
+.product-actions__item img{
+    width: 40px;
+    height: 40px;
+}
+.like-count, .comment-info {
+    margin-top: 4px;
+    font-size: 20px;
+}
+.product__description, .product__info, .product__comments {
+    margin-top: 20px;
+}
+h2{
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+p{
+    font-size: 24px;
+}
+h3{
+    font-size: 28px;
+    font-weight: bold;
+}
+.tag {
+    display: inline-block;
+    background-color: #D9D9D9;
+    color: #333;
+    padding: 8px 16px;
+    border-radius: 15px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    font-size: 20px;
+}
+.comment {
+    border-top: 1px solid #D9D9D9;
+    padding: 8px 0;
+}
+.product__comments h2, .product__comments span{
+    font-size: 36px;
+    font-weight: bold;
+    color: #5F5F5F;
+}
+textarea[name="content"] {
+    width: 100%;
+    min-height: 80px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-bottom: 5px;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .item-content {
+        flex-direction: column;
+    }
+
+    .product__image-area,
+    .product__description-area {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}

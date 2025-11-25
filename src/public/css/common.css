@@ -1,0 +1,90 @@
+.container {
+  max-width: 1400px;
+  padding: 0 20px;
+}
+.grid-item {
+  flex: 0 auto;
+  min-width: 300px;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #000000;
+  height: 82px;
+}
+.header-logo {
+  width: 370px;
+  height: 36px;
+  margin-left: 40px;
+}
+.search-form{
+  display: flex;
+  align-items: center;
+  height: 50px;
+  width: 565px;
+}
+.header-search__input {
+  font-size: 24px;
+  padding-left: 31px;
+  margin-left: 65px;
+  border-radius: 5px;
+}
+.header-nav{
+  display: flex;
+  align-items: center;
+  width: 463px;
+  gap: 37px;
+  font-size: 24px;
+}
+.header-nav__button{
+  color: #fff;
+  text-decoration: none;
+  background-color: #000;
+  border: none;
+  font-size: 24px;
+}
+.header-nav__button-sell{
+  background-color: #fff;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  font-size: 24px;
+  height: 50px;
+  width: 100px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 37px;
+}
+.button {
+  width: 100%;
+  margin-top: 60px;
+  background: #FF5555;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  height: 60px;
+  font-size: 26px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.image-button {
+  background-color: #fff;
+  color: #ff5555;
+  border: 2px solid #ff5555;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.title {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 98px 0;
+  text-align: center;
+}
+
