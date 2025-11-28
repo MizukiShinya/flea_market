@@ -6,7 +6,7 @@ Laravel フリマアプリケーション
 ### 1. リポジトリをクローン
 
 ```bash
-git clone [リポジトリURL]
+git clone https://github.com/MizukiShinya/flea_market.git
 cd flea_market
 ```
 

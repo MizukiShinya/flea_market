@@ -18,7 +18,6 @@ class CreateLikesTable extends Migration
             $table->foreignId('profile_id');
             $table->foreignId('item_id');
             $table->timestamps();
-
             $table->foreign('profile_id')->references('id')->on('profiles')->onDelete('cascade');
             $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
             
