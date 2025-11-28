@@ -70,6 +70,6 @@ class LoginTest extends TestCase
         $this->assertAuthenticatedAs($user);
 
         // ログイン後の遷移先（あなたの仕様に合わせて調整）
-        $response->assertRedirect('/dashboard');
+        $response->assertRedirect('/');
     }
 }

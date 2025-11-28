@@ -35,6 +35,7 @@ class ProfileEditTest extends TestCase
         $response->assertSee('テストビル');
     }
 
+    /** @test */
     public function ログインユーザーはプロフィールを更新できる()
     {
         $user = User::factory()->create();
@@ -43,17 +44,16 @@ class ProfileEditTest extends TestCase
         $this->actingAs($user);
 
         Storage::fake('public');
-        $image = UploadedFile::fake()->image('profile.jpg');
 
-        $response = $this->put('/profile', [
+        $response = $this->put('/mypage/update', [
             'name' => '更新ユーザー',
             'postcode' => '987-6543',
             'address' => '大阪市北区',
             'building' => '更新ビル',
-            'profile_image_url' => $image,
+            'profile_image_url' => null,
         ]);
 
-        $response->assertRedirect('/profile');
+        $response->assertRedirect('/');
 
         $profile->refresh();
 
@@ -65,6 +65,7 @@ class ProfileEditTest extends TestCase
         Storage::disk('public')->assertExists($profile->profile_image_url);
     }
 
+    /** @test */
     public function 必須項目がない場合はバリデーションエラーになる()
     {
         $user = User::factory()->create();
@@ -81,6 +82,7 @@ class ProfileEditTest extends TestCase
         $response->assertSessionHasErrors(['name', 'postcode', 'address']);
     }
 
+    /** @test */
     public function 未ログインユーザーはプロフィール編集できない()
     {
         $response = $this->get('/mypage/profile');

@@ -91,6 +91,6 @@ class RegisterTest extends TestCase
         ]);
 
         // 成功後の遷移先（プロフィール設定ページ想定）
-        $response->assertRedirect('/profile');
+        $response->assertRedirect('/mypage/profile');
     }
 }

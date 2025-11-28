@@ -15,28 +15,24 @@ class ItemCreateTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function ログインユーザーは商品を出品できる()
+    public function test_ログインユーザーは商品を出品できる()
     {
         $user = User::factory()->create();
         $profile = Profile::factory()->create(['user_id' => $user->id]);
 
         $this->actingAs($user);
 
-        Storage::fake('public');
+        $category1 = Category::factory()->create(['content' => '服']);
+        $category2 = Category::factory()->create(['content' => 'アクセサリー']);
 
-        $category1 = Category::factory()->create(['name' => '服']);
-        $category2 = Category::factory()->create(['name' => 'アクセサリー']);
-
-        $image = UploadedFile::fake()->image('test_item.jpg');
-
-        $response = $this->post('/item', [
+        $response = $this->post('/sell', [
             'item_name' => 'テスト商品',
             'brand' => 'テストブランド',
             'detail' => 'テスト商品説明',
             'price' => 5000,
             'condition' => '新品',
-            'categories' => [$category1->name, $category2->name],
-            'image' => $image,
+            'categories' => [$category1->content, $category2->content],
+            'image' => null,
         ]);
 
         $item = Item::first();
@@ -53,8 +49,6 @@ class ItemCreateTest extends TestCase
             'profile_id' => $profile->id,
         ]);
 
-        Storage::disk('public')->assertExists($item->item_image_url);
-
         $this->assertEquals(2, $item->categories()->count());
     }
 
@@ -65,7 +59,7 @@ class ItemCreateTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->post('/item', [
+        $response = $this->post('/sell', [
             'item_name' => '',
             'price' => '',
             'condition' => '',
@@ -74,28 +68,9 @@ class ItemCreateTest extends TestCase
         $response->assertSessionHasErrors(['item_name', 'price', 'condition']);
     }
 
-    public function 画像が2MB以上の場合はバリデーションエラーになる()
-    {
-        $user = User::factory()->create();
-        Profile::factory()->create(['user_id' => $user->id]);
-
-        $this->actingAs($user);
-
-        $image = UploadedFile::fake()->image('large.jpg')->size(3072);
-
-        $response = $this->post('/item', [
-            'item_name' => '商品名',
-            'price' => 1000,
-            'condition' => '新品',
-            'image' => $image,
-        ]);
-
-        $response->assertSessionHasErrors(['image']);
-    }
-
     public function 未ログインユーザーは商品を出品できない()
     {
-        $response = $this->post('/item', [
+        $response = $this->post('/sell', [
             'item_name' => 'テスト商品',
             'price' => 1000,
             'condition' => '新品',

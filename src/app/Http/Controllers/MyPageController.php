@@ -50,10 +50,11 @@ class MyPageController extends Controller
         $profile = $user->profile;
 
         $validated = $request->validate([
+            'name' => 'required|string|max:255',
             'bio' => 'nullable|string|max:255',
             'profile_image_url' => 'nullable|image|max:2048',
-            'postcode' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:255',
+            'postcode' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
             'building' => 'nullable|string|max:255',
         ]);
 

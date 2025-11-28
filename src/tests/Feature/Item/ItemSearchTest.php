@@ -12,6 +12,7 @@ class ItemSearchTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** @test */
     public function 商品名にキーワードが含まれる商品だけが表示される()
     {
         $match1 = Item::factory()->create(['item_name' => 'Apple Watch']);
@@ -28,6 +29,7 @@ class ItemSearchTest extends TestCase
         $response->assertViewIs('item.index');
     }
 
+    /** @test */
     public function ログイン中は自分が出品した商品が除外される()
     {
         $user = User::factory()->create();
@@ -38,7 +40,9 @@ class ItemSearchTest extends TestCase
             'item_name' => 'My Item',
         ]);
 
+        $otherProfile = Profile::factory()->create();
         $other = Item::factory()->create([
+            'profile_id' => $otherProfile->id,
             'item_name' => 'Other Item'
         ]);
 
@@ -47,10 +51,10 @@ class ItemSearchTest extends TestCase
         $response = $this->get('/search?keyword=Item');
 
         $response->assertDontSee('My Item');
-
         $response->assertSee('Other Item');
     }
 
+    /** @test */
     public function 検索キーワードが空のときは全件表示されるが自分の商品は除外される()
     {
         $user = User::factory()->create();
@@ -61,7 +65,9 @@ class ItemSearchTest extends TestCase
             'item_name' => 'Mine'
         ]);
 
+        $otherProfile = Profile::factory()->create();
         $other = Item::factory()->create([
+            'profile_id' => $otherProfile->id,
             'item_name' => 'Other'
         ]);
 
@@ -70,29 +76,30 @@ class ItemSearchTest extends TestCase
         $response = $this->get('/search?keyword=');
 
         $response->assertDontSee('Mine');
-
         $response->assertSee('Other');
     }
 
+    /** @test */
     public function 検索結果が新しい順になっている()
     {
         $old = Item::factory()->create([
-            'item_name' => 'Old Item',
-            'created_at' => now()->subDays(5),
-        ]);
+        'item_name' => 'Old Item',
+        'created_at' => now()->subDays(5),
+    ]);
 
-        $new = Item::factory()->create([
-            'item_name' => 'New Item',
-            'created_at' => now(),
-        ]);
+    $new = Item::factory()->create([
+        'item_name' => 'New Item',
+        'created_at' => now(),
+    ]);
 
-        $response = $this->get('/search?keyword=Item');
+    $response = $this->get('/search?keyword=Item');
 
-        $html = $response->getContent();
+    $response->assertStatus(200);
+    $response->assertViewIs('item.index');
 
-        $newPos = strpos($html, 'New Item');
-        $oldPos = strpos($html, 'Old Item');
+    $items = $response->viewData('items');
 
-        $this->assertTrue($newPos < $oldPos);
+    $this->assertEquals('New Item', $items->first()->item_name);
+    $this->assertEquals('Old Item', $items->last()->item_name);
     }
 }

@@ -14,6 +14,7 @@ class PaymentMethodTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** @test */
     public function ログインユーザーは購入画面で支払い方法を選択できる()
     {
         $user = User::factory()->create();
@@ -38,8 +39,8 @@ class PaymentMethodTest extends TestCase
         ]);
     }
 
-    public function 支払い方法を変更するとDBに反映される()
-    {
+    /** @test */
+    public function 支払い方法を変更するとDBに反映される(){
         $user = User::factory()->create();
         $profile = Profile::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user);
@@ -52,18 +53,24 @@ class PaymentMethodTest extends TestCase
             'address_id' => $address->id,
         ]);
 
-        $order = Order::first();
-        $this->assertEquals('credit', $order->payment_method);
+        $order1 = Order::where('profile_id', $profile->id)
+                  ->where('item_id', $item->id)
+                  ->first();
+        $this->assertEquals('credit', $order1->payment_method);
 
-        $this->post("/purchase/{$item->id}", [
+        $item2 = Item::factory()->create();
+        $this->post("/purchase/{$item2->id}", [
             'payment_method' => 'konbini',
             'address_id' => $address->id,
         ]);
 
-        $order = Order::latest()->first();
-        $this->assertEquals('cash', $order->payment_method);
+        $order2 = Order::where('profile_id', $profile->id)
+                  ->where('item_id', $item2->id)
+                  ->first();
+        $this->assertEquals('cash', $order2->payment_method);
     }
 
+    /** @test */
     public function 未ログインユーザーは支払い方法を選択できない()
     {
         $item = Item::factory()->create();

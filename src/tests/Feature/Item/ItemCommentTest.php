@@ -21,16 +21,16 @@ class ItemCommentTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->post("/item/{item}/comments", [
-            'comment' => 'テストコメント',
+        $response = $this->post("/item/{$item->id}/comments", [
+            'content' => 'テストコメント',
         ]);
 
-        $response->assertRedirect(); // 送信後リダイレクトを想定
+        $response->assertRedirect();
 
         $this->assertDatabaseHas('comments', [
             'profile_id' => $profile->id,
             'item_id' => $item->id,
-            'comment' => 'テストコメント',
+            'content' => 'テストコメント',
         ]);
     }
 
@@ -42,11 +42,11 @@ class ItemCommentTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->post("/item/{item}/comments", [
-            'comment' => '',
+        $response = $this->post("/item/{$item->id}/comments", [
+            'content' => '',
         ]);
 
-        $response->assertSessionHasErrors(['comment']);
+        $response->assertSessionHasErrors(['content']);
     }
 
     /** @test */
@@ -54,8 +54,8 @@ class ItemCommentTest extends TestCase
     {
         $item = Item::factory()->create();
 
-        $response = $this->post("/item//{item}/comments", [
-            'comment' => 'テストコメント',
+        $response = $this->post("/item/{$item->id}/comments", [
+            'content' => 'テストコメント',
         ]);
 
         $response->assertRedirect('/login');

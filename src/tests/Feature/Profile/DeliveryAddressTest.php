@@ -14,20 +14,22 @@ class DeliveryAddressTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** @test */
     public function ログインユーザーは配送先住所を登録できる()
     {
         $user = User::factory()->create();
         $profile = Profile::factory()->create(['user_id' => $user->id]);
+        $item = Item::factory()->create();
 
         $this->actingAs($user);
 
-        $response = $this->post('/addresses', [
+        $response = $this->put("/purchase/address/{$item->id}", [
             'postcode' => '123-4567',
             'address' => '東京都渋谷区',
             'building' => 'テストビル',
         ]);
 
-        $response->assertRedirect('/profile/addresses');
+        $response->assertRedirect();
 
         $this->assertDatabaseHas('addresses', [
             'profile_id' => $profile->id,
@@ -37,6 +39,7 @@ class DeliveryAddressTest extends TestCase
         ]);
     }
 
+    /** @test */
     public function 登録した配送先は購入画面に反映される()
     {
         $user = User::factory()->create();
@@ -52,7 +55,7 @@ class DeliveryAddressTest extends TestCase
 
         $item = Item::factory()->create();
 
-        $response = $this->get("/item/{$item->id}/purchase");
+        $response = $this->get("/purchase/address/{$item->id}");
         $response->assertStatus(200);
 
         $response->assertSee('987-6543');
@@ -60,6 +63,7 @@ class DeliveryAddressTest extends TestCase
         $response->assertSee('購入ビル');
     }
 
+    /** @test */
     public function 購入した商品に配送先住所が紐づいて保存される()
     {
         $user = User::factory()->create();
@@ -72,7 +76,7 @@ class DeliveryAddressTest extends TestCase
 
         $item = Item::factory()->create();
 
-        $response = $this->post("/item/{$item->id}/purchase", [
+        $response = $this->post("/purchase/{$item->id}", [
             'payment_method' => 'credit',
             'address_id' => $address->id,
         ]);
@@ -87,12 +91,15 @@ class DeliveryAddressTest extends TestCase
         ]);
     }
 
+    /** @test */
     public function 未ログインユーザーは配送先変更画面にアクセスできない()
     {
-        $response = $this->get('/addresses');
+        $item = Item::factory()->create();
+
+        $response = $this->get("/purchase/address/{$item->id}");
         $response->assertRedirect('/login');
 
-        $response = $this->post('/addresses', [
+        $response = $this->put("/purchase/address/{$item->id}", [
             'postcode' => '123-4567',
             'address' => '東京都',
         ]);

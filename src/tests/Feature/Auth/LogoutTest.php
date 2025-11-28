@@ -28,6 +28,6 @@ class LogoutTest extends TestCase
         // 遷移先（アプリの仕様に合わせて調整）
         // Breeze → '/'
         // フリマアプリならトップページ想定
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
     }
 }

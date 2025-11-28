@@ -13,6 +13,7 @@ class ItemDetailLikeTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** @test */
     public function 商品詳細ページにいいねボタンが表示される()
     {
         $profile = Profile::factory()->create();
@@ -24,33 +25,28 @@ class ItemDetailLikeTest extends TestCase
         $response->assertSee('like');
     }
 
+    /** @test */
     public function ログインユーザーはいいねを追加できる()
     {
         $user = User::factory()->create();
         $profile = Profile::factory()->create(['user_id' => $user->id]);
-        $item = Item::factory()->create();
+        $item = Item::factory()->create(['profile_id' => $profile->id]);
 
-        $this->actingAs($user);
-
-        $response = $this->postJson("/item/{item}/like");
-
-        $response->assertJson([
+        $this->actingAs($user)
+            ->postJson(route('item.like', $item->id))
+            ->assertJson([
             'status' => 'added',
             'liked' => true,
-            'count' => 1
-        ]);
-
-        $this->assertDatabaseHas('likes', [
-            'profile_id' => $user->profile->id,
-            'item_id' => $item->id
+            'count' => 1,
         ]);
     }
 
+    /** @test */
     public function ログインユーザーは既存のいいねを削除できる()
     {
         $user = User::factory()->create();
         $profile = Profile::factory()->create(['user_id' => $user->id]);
-        $item = Item::factory()->create();
+        $item = Item::factory()->create(['profile_id' => $profile->id]);
 
         Like::factory()->create([
             'profile_id' => $profile->id,
@@ -59,7 +55,7 @@ class ItemDetailLikeTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->postJson("/item/{item}/like");
+        $response = $this->postJson(route('item.like', $item->id));
 
         $response->assertJson([
             'status' => 'removed',
