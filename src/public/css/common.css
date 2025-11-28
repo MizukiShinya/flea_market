@@ -1,5 +1,5 @@
 .container {
-  max-width: 1400px;
+  max-width: 1540px;
   padding: 0 20px;
 }
 .grid-item {
@@ -33,6 +33,8 @@ img {
   padding-left: 31px;
   margin-left: 65px;
   border-radius: 5px;
+  height: 100%;
+  width: 500px;
 }
 .header-nav{
   display: flex;
@@ -87,4 +89,46 @@ img {
   margin: 98px 0;
   text-align: center;
 }
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
 
+  /* ヘッダー調整 */
+  .header {
+    padding: 0 40px;
+  }
+
+  .search-form {
+    flex: 1 1 550px;
+  }
+
+  .header-search__input {
+    width: 550px;
+    font-size: 22px;
+  }
+
+  .header-nav__button-sell {
+    width: 90px;
+    font-size: 22px;
+  }
+
+  /* 商品カード調整 */
+  .grid-item {
+    max-width: 330px;
+  }
+
+  /* タイトル調整 */
+  .title {
+    font-size: 34px;
+    margin: 80px 0;
+  }
+
+  /* ボタン微調整 */
+  .button {
+    height: 58px;
+    font-size: 24px;
+  }
+
+  .image-button {
+    padding: 7px 14px;
+    font-size: 20px;
+  }
+}

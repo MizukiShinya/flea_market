@@ -23,6 +23,7 @@ class LikeController extends Controller
         if ($existing) {
             $existing->delete();
             $status = 'removed';
+            $liked = false;
         } else {
             // いいね追加
             Like::create([
@@ -30,6 +31,7 @@ class LikeController extends Controller
                 'item_id' => $item->id,
             ]);
             $status = 'added';
+            $liked = true;
         }
         // 最新のいいね数
         $likeCount = Like::where('item_id', $itemId)->count();
@@ -39,7 +41,8 @@ class LikeController extends Controller
 
         return response()->json([
             'status' => $status,
-            'count' => $likeCount
+            'count' => $likeCount,
+            'liked' => $liked
         ]);
     }
 
@@ -73,4 +76,9 @@ class LikeController extends Controller
         $mylists = $query->orderByDesc('created_at')->get();
             return view('item.mylist', compact('mylists', 'keyword'));
         }
+        public function getLikedItems(){
+            $likes = Like::where('user_id', Auth::id())
+            ->with('item')->get();
+        return $likes->pluck('item');
+    }
 }

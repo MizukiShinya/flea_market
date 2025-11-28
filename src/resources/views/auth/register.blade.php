@@ -16,7 +16,7 @@
             <p class="error-message">{{$message}}</p>
         @enderror
         <label for="email">メールアドレス</label>
-        <input type="email" name="email" value="{{old('email')}}">
+        <input type="text" name="email" value="{{old('email')}}">
         @error('email')
             <p class="error-message">{{$message}}</p>
         @enderror

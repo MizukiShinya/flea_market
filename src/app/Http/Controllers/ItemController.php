@@ -6,21 +6,32 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Item;
 use App\Models\Category;
-use App\Models\Mylist;
+use App\Models\Like;
 use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $tab = $request->query('tab', null); // ?tab=mylist の場合のみセット
+
+    if ($tab === 'mylist' && Auth::check()) {
+        // ログインユーザーのいいね商品だけ取得
+        $profile = Auth::user()->profile;
+        $likes = Like::where('profile_id', $profile->id)
+                     ->with('item')
+                     ->get();
+        $items = $likes->pluck('item');
+    } else {
+        // 全商品（自分以外の出品）を取得
         $query = Item::query();
         if (Auth::check()) {
-            // ログインしている場合：自分の商品を除外
             $query->where('profile_id', '!=', Auth::user()->profile->id);
         }
-        // 共通：最新順
         $items = $query->orderBy('created_at', 'desc')->get();
-            return view('item.index', compact('items'));
+    }
+
+    return view('item.index', compact('items', 'tab'));
     }
 
     // 出品フォーム表示
@@ -82,7 +93,7 @@ class ItemController extends Controller
     }
 
     // お気に入り一覧を取得
-    public function mylist(){
+    public function getMylist(){
         $profile = Auth::user()->profile;
         $mylists = Mylist::where('profile_id', $profile->id)
             ->with('item')->get();

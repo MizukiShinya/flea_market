@@ -34,7 +34,7 @@ class AuthController extends Controller
         Auth::login($user);
 
         // mypage.index にリダイレクト
-        return redirect()->route('mypage.edit');
+        return redirect()->intended(route('mypage.profile'));
     }
     // ログイン処理
     public function authenticate(Request $request){

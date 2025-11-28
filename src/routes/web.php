@@ -24,14 +24,13 @@ Route::middleware('auth')->group(function () {
     Route::prefix('mypage')->name('mypage.')->group(function () {
         Route::get('/', [MyPageController::class, 'index'])->name('index');
         Route::post('/', [MyPageController::class, 'store']);
-        Route::get('/edit', [MyPageController::class, 'edit'])->name('edit');
+        Route::get('/profile', [MyPageController::class, 'edit'])->name('profile');
         Route::put('/update', [MyPageController::class, 'update'])->name('update');
         Route::get('/purchase', [PurchaseController::class, 'orders'])->name('purchase');
     });
 
     // いいね・出品・コメント
     Route::prefix('item')->name('item.')->group(function () {
-        Route::get('/mylist', [LikeController::class, 'index'])->name('mylist');
         Route::post('/{item}/like', [LikeController::class, 'toggle'])->name('like');
         Route::post('/{item}/comments',[CommentController::class, 'store'])->name('comments.store');
     });
@@ -44,6 +43,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('purchase')->name('purchase.')->group(function () {
         Route::get('/{item}', [PurchaseController::class, 'show'])->name('show');
         Route::post('/{item}', [PurchaseController::class, 'store'])->name('store');
+        Route::post('/{item}/checkout', [PurchaseController::class, 'checkout'])->name('checkout');
+        Route::get('/success/{item}', [PurchaseController::class, 'success'])->name('success');
+        Route::get('/cancel/{item}', [PurchaseController::class, 'cancel'])->name('cancel');
         Route::get('/address/{item}', [PurchaseController::class, 'addressEdit'])->name('addressEdit');
         Route::put('address/{item}', [PurchaseController::class, 'addressUpdate'])->name('addressUpdate');
     });

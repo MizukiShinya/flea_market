@@ -22,13 +22,13 @@
                 <div class="placeholder-circle"></div>
             @endif
             <input class="name" type="text" name="name" value="{{old('name', Auth::user()->name)}}">
-        <button class="image-button" type="button" onclick="location.href='{{ route('mypage.edit') }}'">プロフィール編集</button>
+        <button class="image-button" type="button" onclick="location.href='{{ route('mypage.profile') }}'">プロフィール編集</button>
     </div>
 
     {{-- 上部ナビ（おすすめ・マイリスト） --}}
     <div class="toppage-list">
-        <a class="recommend {{ $page === 'sell' ? 'active' : '' }}" href="/mypage?page=sell">出品した商品</a>
-        <a class="mylist {{ $page === 'buy' ? 'active' : '' }}" href="/mypage?page=buy">購入した商品</a>
+        <a class="sell {{ $page === 'sell' ? 'active' : '' }}" href="/mypage?page=sell">出品した商品</a>
+        <a class="buy {{ $page === 'buy' ? 'active' : '' }}" href="/mypage?page=buy">購入した商品</a>
     </div>
 
     {{-- 商品一覧 --}}

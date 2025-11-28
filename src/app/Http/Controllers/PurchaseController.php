@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\Address;
+use Stripe\Stripe;
+use Stripe\Checkout\Session as StripeSession;
 
 class PurchaseController extends Controller
 {
@@ -59,7 +61,7 @@ class PurchaseController extends Controller
         // 商品を購入済みに更新
         $item->is_sold = true;
         $item->save();
-            return redirect()->route('mypage.index');
+            return redirect()->route('mypage.index', ['page' => 'buy']);
     }
     // 配送先変更画面
     public function addressEdit($item_id)
@@ -79,11 +81,76 @@ class PurchaseController extends Controller
         ]);
 
         $profileId = Auth::user()->profile->id;
-        Address::updateOrCreate(
+        $address = Address::updateOrCreate(
             ['profile_id' => $profileId],$validated
         );
         session(['purchase_address_id' => $address->id]);
 
-        return redirect()->route('purchase.show', ['item_id'=>$item_id]);
+        return redirect()->route('purchase.show', ['item'=>$item_id]);
     }
+
+    // Stripe Checkout用
+    public function checkout(Request $request, Item $item){
+        $user = Auth::user();
+        if (!$user->profile) {
+            return back();
+        }
+        $selectedMethod = $request->input('payment_method', 'card');
+
+        $allowedMethods = ['card', 'konbini'];
+        if (!in_array($selectedMethod, $allowedMethods)) {
+            $selectedMethod = 'card';
+        }
+
+        // Stripe初期化
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        // セッション作成
+        $session = StripeSession::create([
+            'payment_method_types' => [$selectedMethod],
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'jpy',
+                    'product_data' => [
+                        'name' => $item->item_name,
+                    ],
+                    'unit_amount' => $item->price,
+                ],
+                'quantity' => 1,
+            ]],
+            'mode' => 'payment',
+            'success_url' => route('purchase.success', ['item' => $item->id]),
+            'cancel_url' => route('purchase.cancel', ['item' => $item->id]),
+        ]);
+
+        // Stripe決済画面へリダイレクト
+        return redirect($session->url);
+    }
+
+    // 支払い成功
+    public function success(Item $item)
+    {
+        $user = Auth::user();
+
+        // 商品ステータス更新
+        $item->is_sold = true;
+        $item->save();
+
+        // 購入履歴保存
+        Order::create([
+            'profile_id' => $user->profile->id,
+            'item_id' => $item->id,
+            'address_id' => session('purchase_address_id'),
+            'payment_method' => 'stripe',
+        ]);
+
+        return redirect()->route('mypage.index', ['page' => 'buy']);
+    }
+
+    // 支払いキャンセル
+    public function cancel(Item $item)
+    {
+        return redirect()->route('purchase.show', ['item' => $item->id]);
+    }
+
 }

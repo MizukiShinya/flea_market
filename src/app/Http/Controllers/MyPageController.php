@@ -5,25 +5,28 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\ItemController;
 use App\Models\Profile;
 use App\Models\Order;
 
 class MyPageController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request, ItemController $itemController){
         $user = Auth::user();
         $profile = $user->profile;
-        $page = $request->query('page', 'sell');
+        $page = $request->query('page');
 
         if ($page === 'buy') {
-
-            // 購入した商品を取得
             $items = $profile->purchasedItems()->latest()->get();
+        } elseif ($page === 'mylist') {
+        $response = $itemController->mylist();
+        $mylists = $response->getData()['mylists'];
+        $items = $mylists->pluck('item');
         } else {
-             // 出品した商品を取得
             $items = $profile->items()->latest()->get();
+            $page = 'sell';
         }
-        return view('mypage.index', compact('user', 'profile', 'items', 'page'));
+        return view('mypage.index', compact('user', 'profile', 'items', 'page',));
     }
     // プロフィール設定
     public function edit(){
@@ -38,7 +41,7 @@ class MyPageController extends Controller
                 'building' => '',
                 'profile_image_url' => null,
             ]);}
-        return view('mypage.edit', compact('profile', 'user'));
+        return view('mypage.profile', compact('profile', 'user'));
     }
 
     // プロフィール更新

@@ -15,8 +15,12 @@
 
     {{-- 上部ナビ（おすすめ・マイリスト） --}}
     <div class="toppage-list">
-        <a class="recommend" href="#">おすすめ</a>
-        <a class="mylist" href="{{route('item.mylist')}}">マイリスト</a>
+        <a class="{{ !$tab ? 'active' : '' }}" href="/">おすすめ</a>
+        @auth
+            <a class="{{ $tab === 'mylist' ? 'active' : '' }}" href="/?tab=mylist">マイリスト</a>
+        @else
+            <a class="{{ $tab === 'mylist' ? 'active' : '' }}" href="{{ route('login') }}">マイリスト</a>
+        @endauth
     </div>
 
     {{-- 商品一覧 --}}
@@ -28,8 +32,7 @@
             <div class="product-card">
                 <div class="product__image-area">
                     <a href="{{ route('item.show', ['item_id' => $item->id]) }}">
-                        <img src="{{ asset('storage/' . $item->image_path) }}" alt="商品画像">
-                    </a>
+                        <img src="{{ asset('storage/' . $item->image_path) }}" alt="商品画像"></a>
                     @if($item->is_sold)
                         <div class="sold-label">Sold</div>
                     @endif

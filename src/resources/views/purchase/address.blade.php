@@ -7,7 +7,7 @@
 @section('content')
 <div class="user-content">
     <h1 class="title">住所の変更</h1>
-    <form class="user-form" action="{{route('purchase.addressUpdate', ['item_id' => $item->id])}}" method="post">
+    <form class="user-form" action="{{route('purchase.addressUpdate', ['item' => $item->id])}}" method="post">
         @csrf
         @method('PUT')
         <label for="postcode">郵便番号</label>
